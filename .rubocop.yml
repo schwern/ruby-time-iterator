@@ -1,13 +1,24 @@
-AllCops:
-  TargetRubyVersion: 2.6
+require:
+  - rubocop-rspec
+  - rubocop-performance
+
+# Use whichever makes sense
+Style/AccessModifierDeclarations:
+  Enabled: false
+
+# The intent of writing comments in English is noble, but restricting comments to ASCII is not how you do it.
+Style/AsciiComments:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/RedundantReturn:
+  Enabled: false
 
 Style/StringLiterals:
-  Enabled: true
-  EnforcedStyle: double_quotes
+  Enabled: false
 
-Style/StringLiteralsInInterpolation:
-  Enabled: true
-  EnforcedStyle: double_quotes
-
-Layout/LineLength:
-  Max: 120
+# It gets silly with tiny arrays
+Style/WordArray:
+  MinSize: 4
