@@ -2,17 +2,26 @@ class Numeric
   def quarter
     (3 * self).months
   end
-  alias_method :quarters, :quarter
+  alias quarters quarter
 end
 
-module EmailIntegrator
-  module Time
+class Time
+  module Iterator
     INFINITY = 1.0 / 0.0
-    PERIODS = [:second, :minute, :hour, :day, :week, :month, :quarter, :year].freeze
-    ITERATE_BY = PERIODS + PERIODS.map { |period| period.to_s.pluralize.to_sym }
+    PERIODS = {
+      second: :seconds,
+      minute: :minutes,
+      hour: :hours,
+      day: :days,
+      week: :weeks,
+      month: :months,
+      quarter: :quarters,
+      year: :years
+    }.freeze
+    ITERATE_BY = (PERIODS.keys + PERIODS.values).freeze
 
     private def valid_period?(period)
-      raise ArgumentError, "Unknown time period: #{period}" if PERIODS.exclude?(period)
+      raise ArgumentError, "Unknown time period: #{period}" unless PERIODS.include?(period)
     end
 
     private def method_for_period(method, period)
@@ -31,9 +40,8 @@ module EmailIntegrator
 
     def iterate(by:, every: 1)
       by = by.to_sym
-      if ITERATE_BY.exclude?(by)
-        raise ArgumentError, "Unknown period to iterate by: #{by}"
-      end
+
+      raise ArgumentError, "Unknown period to iterate by: #{by}" unless ITERATE_BY.include?(by)
 
       Enumerator.new do |block|
         (0..INFINITY).each do |num|
@@ -73,9 +81,5 @@ module EmailIntegrator
 end
 
 class Time
-  include EmailIntegrator::Time
-end
-
-class ActiveSupport::TimeWithZone
-  include EmailIntegrator::Time
+  include Time::Iterator
 end
