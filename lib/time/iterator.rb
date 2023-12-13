@@ -18,7 +18,7 @@ module EmailIntegrator
     private def method_for_period(method, period)
       period = period.to_sym
       valid_period?(period)
-      send("#{method}_#{period}".to_sym)
+      send("#{method}_#{period}")
     end
 
     def beginning_of(period)

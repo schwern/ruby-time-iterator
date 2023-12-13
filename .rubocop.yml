@@ -1,6 +1,39 @@
 require:
-  - rubocop-rspec
   - rubocop-performance
+  - rubocop-rake
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+
+# Useful to separate conceptual expressions.
+Layout/SpaceInsideArrayLiteralBrackets:
+  Enabled: false
+Layout/SpaceInsideBlockBraces:
+  Enabled: false
+Layout/SpaceInsideHashLiteralBraces:
+  Enabled: false
+Layout/SpaceInsideParens:
+  Enabled: false
+Layout/TrailingEmptyLines:
+  Enabled: false
+
+# The default of 5 is VERY ambicious. And there are plenty of cases where we need to
+# generate large expectation hashes.
+RSpec/ExampleLength:
+  Enabled: false
+
+# change(thing, :method) is clever, but it's also magical. Use it, but don't enforce it.
+RSpec/ExpectChange:
+  Enabled: false
+
+# Just one expectation per example is ambitious.
+RSpec/MultipleExpectations:
+  Max: 5
+
+# %i[foo bar baz] is more difficult to understand than [:foo, :bar, :baz]
+Style/SymbolArray:
+  Enabled: false
 
 # Use whichever makes sense
 Style/AccessModifierDeclarations:
