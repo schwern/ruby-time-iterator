@@ -1,3 +1,5 @@
+require "active_support/core_ext/integer/time"
+
 class Numeric
   def quarter
     (3 * self).months

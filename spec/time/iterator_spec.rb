@@ -1,5 +1,5 @@
 RSpec.describe Time::Iterator do
-  let(:time) { described_class.now }
+  let(:time) { Time.now }
 
   describe '#quarter(s)' do
     [:quarter, :quarters].each do |method|
@@ -86,7 +86,7 @@ RSpec.describe Time::Iterator do
   describe '#days_in_month/year' do
     # Make sure it's accounting for a leap year
     let(:time) {
-      described_class.current.change(year: 2020, month: 2, day: 5)
+      Time.now.change(year: 2020, month: 2, day: 5)
     }
 
     it 'gives the days in the current month' do
@@ -95,11 +95,11 @@ RSpec.describe Time::Iterator do
     end
   end
 
-  describe '#span_to_end_of_today', travel_to: described_class.now do
+  describe '#span_to_end_of_today', travel_to: Time.now do
     it 'creates a span to the end of today' do
       start_span = 7.days.ago
       span = start_span.span_to_end_of_today
-      end_span = described_class.now.tomorrow.beginning_of_day
+      end_span = Time.now.tomorrow.beginning_of_day
 
       expect( span.begin ).to eq start_span
       expect( span.end ).to eq end_span
@@ -114,21 +114,21 @@ RSpec.describe Time::Iterator do
 
   describe '#dow' do
     it 'returns the abbreviated day of the week' do
-      wednesday = described_class.local(2019, 9, 18)
+      wednesday = Time.local(2019, 9, 18)
       expect( wednesday.dow ).to eq 'Wed'
     end
   end
 
   describe '#iso_date' do
     it 'returns an ISO date' do
-      time = described_class.local(2019, 9, 8)
+      time = Time.local(2019, 9, 8)
       expect( time.iso_date ).to eq '2019-09-08'
     end
   end
 
   describe '#human_date' do
     it 'formats the date for humans' do
-      sunday = described_class.local(2019, 9, 8)
+      sunday = Time.local(2019, 9, 8)
       expect( sunday.human_date ).to eq 'Sun Sep 8 2019'
     end
   end
