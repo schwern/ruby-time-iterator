@@ -18,16 +18,6 @@ module TimeIterator
   }.freeze
   ITERATE_BY = (PERIODS.keys + PERIODS.values).freeze
 
-  private def valid_period?(period)
-    raise ArgumentError, "Unknown time period: #{period}" unless PERIODS.include?(period)
-  end
-
-  private def method_for_period(method, period)
-    period = period.to_sym
-    valid_period?(period)
-    send("#{method}_#{period}")
-  end
-
   def iterate(by:, every: 1)
     by = by.to_sym
 
