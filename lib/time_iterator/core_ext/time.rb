@@ -1,7 +1,7 @@
 # Inject convenience methods into Time.
 class Time
   private def valid_period?(period)
-    raise ArgumentError, "Unknown time period: #{period}" unless PERIODS.include?(period)
+    raise ArgumentError, "Unknown time period: #{period}" unless TimeIterator::PERIODS.include?(period)
   end
 
   private def method_for_period(method, period)

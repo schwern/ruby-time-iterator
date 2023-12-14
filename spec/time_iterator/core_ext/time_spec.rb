@@ -1,14 +1,6 @@
 RSpec.describe Time do
   let(:time) { described_class.now }
 
-  describe 'period check' do
-    it 'raises on invalid period' do
-      expect { time.beginning_of(:time) }.to raise_error(ArgumentError)
-      expect { time.end_of(:universe) }.to raise_error(ArgumentError)
-      expect { time.iterate(by: :colors) }.to raise_error(ArgumentError)
-    end
-  end
-
   describe '#beginning_of' do
     periods2methods = {
       minute: :beginning_of_minute,
@@ -24,6 +16,10 @@ RSpec.describe Time do
       it "handles #{period}" do
         expect(time.beginning_of(period)).to eq time.send(method)
       end
+    end
+
+    it 'raises on invalid period' do
+      expect { time.beginning_of(:time) }.to raise_error(ArgumentError)
     end
   end
 
@@ -42,6 +38,10 @@ RSpec.describe Time do
       it "handles #{period}" do
         expect(time.end_of(period)).to eq time.send(method)
       end
+    end
+
+    it 'raises on invalid period' do
+      expect { time.end_of(:universe) }.to raise_error(ArgumentError)
     end
   end
 

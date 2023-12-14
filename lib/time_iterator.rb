@@ -18,19 +18,17 @@ module TimeIterator
   }.freeze
   ITERATE_BY = (PERIODS.keys + PERIODS.values).freeze
 
-  def iterate(by:, every: 1)
-    by = by.to_sym
+  class << self
+    def iterate(start, by:, every: 1)
+      by = by.to_sym
 
-    raise ArgumentError, "Unknown period to iterate by: #{by}" unless ITERATE_BY.include?(by)
+      raise ArgumentError, "Unknown period to iterate by: #{by}" unless ITERATE_BY.include?(by)
 
-    Enumerator.new do |block|
-      (0..INFINITY).each do |num|
-        block << (self + (num.send(by) * every))
+      Enumerator.new do |block|
+        (0..INFINITY).each do |num|
+          block << (start + (num.send(by) * every))
+        end
       end
     end
   end
-end
-
-class Time
-  include TimeIterator
 end
