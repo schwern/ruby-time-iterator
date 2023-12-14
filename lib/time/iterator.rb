@@ -1,14 +1,7 @@
 require "active_support"
 require "active_support/core_ext/integer/time"
+require_relative "iterator/core_ext/numeric"
 require_relative "iterator/core_ext/time"
-
-# Inject 3.quarters
-class Numeric
-  def quarter
-    (3 * self).months
-  end
-  alias quarters quarter
-end
 
 class Time
   # Time iteration, and extra Time methods.
