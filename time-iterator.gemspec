@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative "lib/time/iterator/version"
+require_relative "lib/time_iterator/version"
 
 Gem::Specification.new do |spec|
   spec.name = "time-iterator"
-  spec.version = Time::Iterator::VERSION
+  spec.version = TimeIterator::VERSION
   spec.authors = ["Michael G. Schwern"]
   spec.email = ["schwern@pobox.com"]
 
