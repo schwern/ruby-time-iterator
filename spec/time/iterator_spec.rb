@@ -60,7 +60,8 @@ RSpec.describe Time::Iterator do
       expect( time.iterate(by: :day) ).to be_a(Enumerator)
     end
 
-    [ :second, :minute, :hour, :day, :week, :month, :quarter, :year,
+    [
+      :second, :minute, :hour, :day, :week, :month, :quarter, :year,
       :seconds, :minutes, :hours, :days, :weeks, :months, :quarter, :years
     ].each do |period|
       it "iterates by #{period}" do
@@ -85,9 +86,9 @@ RSpec.describe Time::Iterator do
 
   describe '#days_in_month/year' do
     # Make sure it's accounting for a leap year
-    let(:time) {
+    let(:time) do
       Time.now.change(year: 2020, month: 2, day: 5)
-    }
+    end
 
     it 'gives the days in the current month' do
       expect( time.days_in_month ).to eq 29
@@ -96,19 +97,24 @@ RSpec.describe Time::Iterator do
   end
 
   describe '#span_to_end_of_today', travel_to: Time.now do
-    it 'creates a span to the end of today' do
-      start_span = 7.days.ago
-      span = start_span.span_to_end_of_today
-      end_span = Time.now.tomorrow.beginning_of_day
+    let(:span_begin) { 7.days.ago }
+    let(:span_end) { Time.now.tomorrow.beginning_of_day }
+    let(:span) { span_begin.span_to_end_of_today }
 
-      expect( span.begin ).to eq start_span
-      expect( span.end ).to eq end_span
+    it 'creates an excluding span to the end of today' do
+      expect( span.begin ).to eq span_begin
+      expect( span.end ).to eq span_end
       expect( span ).to be_exclude_end
+    end
 
-      # See https://github.com/rubocop-hq/rubocop-rspec/issues/926
-      expect( span.cover?(start_span) ).to be_truthy
-      expect( span.cover?(end_span) ).to be_falsey
-      expect( span.cover?(end_span - 1.second) ).to be_truthy
+    it 'covers from the start and excluding the end' do
+      # See https://github.com/rubocop-hq/rubocop-rspec/issues/926 for why it isn't using to include.
+      # See https://github.com/rubocop/rubocop-rspec/issues/466 for why its disabled (be_cover(start_span))
+      # rubocop:disable RSpec/PredicateMatcher
+      expect( span.cover?(span_begin) ).to be_truthy
+      expect( span.cover?(span_end) ).to be_falsey
+      expect( span.cover?(span_end - 1.second) ).to be_truthy
+      # rubocop:enable RSpec/PredicateMatcher
     end
   end
 
