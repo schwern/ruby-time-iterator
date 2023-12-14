@@ -1,4 +1,4 @@
-RSpec.describe Time::Iterator do
+RSpec.describe TimeIterator do
   let(:time) { Time.now }
 
   describe '#iterate' do
