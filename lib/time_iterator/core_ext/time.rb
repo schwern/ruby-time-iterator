@@ -1,5 +1,15 @@
 # Inject convenience methods into Time.
 class Time
+  private def valid_period?(period)
+    raise ArgumentError, "Unknown time period: #{period}" unless TimeIterator::PERIODS.include?(period)
+  end
+
+  private def method_for_period(method, period)
+    period = period.to_sym
+    valid_period?(period)
+    send("#{method}_#{period}")
+  end
+
   def beginning_of(period)
     method_for_period(:beginning_of, period)
   end
