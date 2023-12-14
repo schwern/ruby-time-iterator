@@ -1,5 +1,7 @@
+require "active_support"
 require "active_support/core_ext/integer/time"
 
+# Inject 3.quarters
 class Numeric
   def quarter
     (3 * self).months
@@ -8,6 +10,7 @@ class Numeric
 end
 
 class Time
+  # Time iteration, and extra Time methods.
   module Iterator
     INFINITY = 1.0 / 0.0
     PERIODS = {
