@@ -1,37 +1,64 @@
 RSpec.describe TimeIterator do
-  let(:time) { Time.now }
+  let(:time) { Time.gm(2000, 1, 1, 0, 0, 0) }
 
   describe '.iterate' do
     it 'uses an Enumerator' do
-      expect( described_class.iterate(time, by: :day) ).to be_a(Enumerator)
-    end
-
-    it 'raises on an invalid period' do
-      expect do
-        described_class.iterate(time, by: :colors)
-      end.to raise_error(ArgumentError)
-    end
-
-    [
-      :second, :minute, :hour, :day, :week, :month, :quarter, :year,
-      :seconds, :minutes, :hours, :days, :weeks, :months, :quarter, :years
-    ].each do |period|
-      it "iterates by #{period}" do
-        expect(
-          described_class.iterate(time, by: period).take(3)
-        ).to eq [time, time + 1.send(period), time + 2.send(period)]
-      end
-    end
-
-    it 'iterates every X periods' do
       expect(
-        described_class.iterate(time, by: :day, every: 3).take(3)
-      ).to eq [time, time + 3.days, time + 6.days]
+        described_class.iterate(time, by: ActiveSupport::Duration.days(1))
+      ).to be_a(Enumerator)
+    end
+
+    it 'raises on an invalid `by`' do
+      expect {
+        described_class.iterate(time, by: :colors)
+      }.to raise_error(ArgumentError)
+    end
+
+    it "iterates" do
+      expect(
+        described_class.iterate(
+          Time.gm(2000, 1, 1), by: ActiveSupport::Duration.days(3)
+        ).take(3)
+      ).to eq [
+        Time.gm(2000, 1, 1),
+        Time.gm(2000, 1, 4),
+        Time.gm(2000, 1, 7)
+      ]
+    end
+
+    it "stops before `to`" do
+      expect(
+        described_class.iterate(
+          Time.gm(2000, 1, 1),
+          by: ActiveSupport::Duration.days(3),
+          to: Time.gm(2000, 1, 12)
+        ).to_a
+      ).to eq [
+        Time.gm(2000, 1, 1),
+        Time.gm(2000, 1, 4),
+        Time.gm(2000, 1, 7),
+        Time.gm(2000, 1, 10)
+      ]
+    end
+
+    it "includes `to`" do
+      expect(
+        described_class.iterate(
+          Time.gm(2000, 1, 1),
+          by: ActiveSupport::Duration.days(3),
+          to: Time.gm(2000, 1, 10)
+        ).to_a
+      ).to eq [
+        Time.gm(2000, 1, 1),
+        Time.gm(2000, 1, 4),
+        Time.gm(2000, 1, 7),
+        Time.gm(2000, 1, 10)
+      ]
     end
 
     it 'does not alter the original time' do
       orig = time.clone
-      described_class.iterate(time, by: :day).take(5)
+      described_class.iterate(time, by: ActiveSupport::Duration.weeks(2)).take(5)
       expect( time ).to eq orig
     end
   end

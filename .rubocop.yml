@@ -44,6 +44,9 @@ Style/AccessModifierDeclarations:
 Style/AsciiComments:
   Enabled: false
 
+Style/BlockDelimiters:
+  EnforcedStyle: "braces_for_chaining"
+
 Style/FrozenStringLiteralComment:
   Enabled: false
 
