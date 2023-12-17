@@ -26,6 +26,36 @@ RSpec.describe TimeIterator do
       ]
     end
 
+    it "stops before `to`" do
+      expect(
+        described_class.iterate(
+          Time.gm(2000, 1, 1),
+          by: ActiveSupport::Duration.days(3),
+          to: Time.gm(2000, 1, 12)
+        ).to_a
+      ).to eq [
+        Time.gm(2000, 1, 1),
+        Time.gm(2000, 1, 4),
+        Time.gm(2000, 1, 7),
+        Time.gm(2000, 1, 10)
+      ]
+    end
+
+    it "includes `to`" do
+      expect(
+        described_class.iterate(
+          Time.gm(2000, 1, 1),
+          by: ActiveSupport::Duration.days(3),
+          to: Time.gm(2000, 1, 10)
+        ).to_a
+      ).to eq [
+        Time.gm(2000, 1, 1),
+        Time.gm(2000, 1, 4),
+        Time.gm(2000, 1, 7),
+        Time.gm(2000, 1, 10)
+      ]
+    end
+
     it 'does not alter the original time' do
       orig = time.clone
       described_class.iterate(time, by: ActiveSupport::Duration.weeks(2)).take(5)
