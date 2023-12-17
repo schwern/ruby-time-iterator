@@ -1,32 +1,17 @@
 require "active_support"
-require "active_support/core_ext/integer/time"
-require_relative "time_iterator/core_ext/numeric"
-require_relative "time_iterator/core_ext/time"
+require "active_support/duration"
 
 # Time iteration.
 module TimeIterator
-  INFINITY = 1.0 / 0.0
-  PERIODS = {
-    second: :seconds,
-    minute: :minutes,
-    hour: :hours,
-    day: :days,
-    week: :weeks,
-    month: :months,
-    quarter: :quarters,
-    year: :years
-  }.freeze
-  ITERATE_BY = (PERIODS.keys + PERIODS.values).freeze
-
   class << self
-    def iterate(start, by:, every: 1)
-      by = by.to_sym
-
-      raise ArgumentError, "Unknown period to iterate by: #{by}" unless ITERATE_BY.include?(by)
+    def iterate(start, by:)
+      raise ArgumentError, "`by` must be an ActiveSupport::Duration" unless by.is_a?(ActiveSupport::Duration)
 
       Enumerator.new do |block|
-        (0..INFINITY).each do |num|
-          block << (start + (num.send(by) * every))
+        time = start
+        loop do |_num|
+          block << time
+          time += by
         end
       end
     end
