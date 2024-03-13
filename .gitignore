@@ -13,3 +13,6 @@
 # For Gem development, do not lock in the versions of deps. This is to
 # mirror how it will be used in practice, with any mix of versions.
 Gemfile.lock
+
+# MacOS poop
+.DS_Store
