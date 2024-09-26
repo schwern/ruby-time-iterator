@@ -85,7 +85,7 @@ module TimeIterator
       elsif time.utc?
         ::Time.utc(new_year, new_month, new_day, new_hour, new_min, new_sec)
       elsif time.zone.respond_to?(:utc_to_local)
-        new_time = ::Time.new(new_year, new_month, new_day, new_hour, new_min, new_sec, zone)
+        new_time = ::Time.new(new_year, new_month, new_day, new_hour, new_min, new_sec, time.zone)
 
         # When there are two occurrences of a nominal time due to DST ending,
         # `Time.new` chooses the first chronological occurrence (the one with a
@@ -96,16 +96,16 @@ module TimeIterator
         # new time might be a first chronological occurrence. So we add the offset
         # difference to fast-forward the new time, and check if the result has the
         # desired UTC offset (i.e. is the second chronological occurrence).
-        offset_difference = new_time.utc_offset - utc_offset
-        if offset_difference.positive? && (new_time2 = new_time + offset_difference).utc_offset == utc_offset
+        offset_difference = new_time.utc_offset - time.utc_offset
+        if offset_difference.positive? && (new_time2 = new_time + offset_difference).utc_offset == time.utc_offset
           new_time2
         else
           new_time
         end
-      elsif zone
-        ::Time.local(new_sec, new_min, new_hour, new_day, new_month, new_year, nil, nil, isdst, nil)
+      elsif time.zone
+        ::Time.local(new_sec, new_min, new_hour, new_day, new_month, new_year, nil, nil, time.isdst, nil)
       else
-        ::Time.new(new_year, new_month, new_day, new_hour, new_min, new_sec, utc_offset)
+        ::Time.new(new_year, new_month, new_day, new_hour, new_min, new_sec, time.utc_offset)
       end
     end
 

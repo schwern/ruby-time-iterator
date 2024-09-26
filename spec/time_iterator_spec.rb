@@ -92,6 +92,20 @@ RSpec.describe TimeIterator do
       ]
     end
 
+    it "works with time zones" do
+      expect(
+        described_class.iterate(
+          Time.local(2000, 1, 1),
+          by: { days: 3 },
+          to: Time.local(2000, 1, 9)
+        ).to_a
+      ).to eq [
+        Time.local(2000, 1, 1),
+        Time.local(2000, 1, 4),
+        Time.local(2000, 1, 7)
+      ]
+    end
+
     it 'does not alter the original time' do
       orig = time.clone
       described_class.iterate(time, by: {weeks: 2}).take(5)
