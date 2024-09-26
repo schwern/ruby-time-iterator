@@ -8,10 +8,36 @@ RSpec.describe TimeIterator do
       ).to be_a(Enumerator)
     end
 
-    it 'raises on an invalid `by`' do
-      expect {
-        described_class.iterate(time, by: :colors)
-      }.to raise_error(ArgumentError, /`by` must be a Hash/i)
+    describe 'argument errors' do
+      it 'when by is not a Hash, it raises' do
+        expect {
+          described_class.iterate(time, by: :colors)
+        }.to raise_error(ArgumentError, /`by` must be a Hash/i)
+      end
+
+      it 'when by is missing, it raises' do
+        expect {
+          described_class.iterate(time)
+        }.to raise_error(ArgumentError, /missing keyword: :by/i)
+      end
+
+      it 'when by is nil, it raises' do
+        expect {
+          described_class.iterate(time, by: nil)
+        }.to raise_error(ArgumentError, /`by` must be a Hash/i)
+      end
+
+      it 'when the by key is invalid, it raises' do
+        expect {
+          described_class.iterate(time, by: { eons: 42 })
+        }.to raise_error(ArgumentError, /Cannot iterate by \[:eons\]/i)
+      end
+
+      it 'when the by Hash is empty, it raises' do
+        expect {
+          described_class.iterate(time, by: {})
+        }.to raise_error(ArgumentError, /`by` must not be empty/i)
+      end
     end
 
     it "iterates Times" do

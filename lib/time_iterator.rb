@@ -2,8 +2,9 @@ require "date"
 
 # Time iteration.
 module TimeIterator
-  DATE_PARTS = [:years, :months, :weeks, :days].freeze
-  TIME_PARTS = [:hours, :minutes, :seconds].freeze
+  DATE_KEYS = [:years, :months, :weeks, :days].freeze
+  TIME_KEYS = [:hours, :minutes, :seconds].freeze
+  BY_KEYS = (DATE_KEYS + TIME_KEYS).freeze
   class << self
     def iterate(start, by:, to: nil)
       check_by(start, by: by)
@@ -13,11 +14,15 @@ module TimeIterator
 
     private def check_by(start, by:)
       raise ArgumentError, "`by` must be a Hash" unless by.is_a?(Hash)
+      raise ArgumentError, "`by` must not be empty" if by.empty?
+
+      invalid_by_keys = by.keys.difference(BY_KEYS)
+      raise ArgumentError, "Cannot iterate by #{invalid_by_keys}" unless invalid_by_keys.empty?
 
       return unless start.is_a?(Date)
 
-      invalid_parts = by.keys.intersection(TIME_PARTS)
-      raise ArgumentError, "Cannot iterate Date by #{invalid_parts}" unless invalid_parts.empty?
+      invalid_date_keys = by.keys.intersection(TIME_KEYS)
+      raise ArgumentError, "Cannot iterate Date by #{invalid_date_keys}" unless invalid_date_keys.empty?
     end
 
     private def advance(start, by:)
