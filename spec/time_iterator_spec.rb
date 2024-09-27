@@ -1,3 +1,5 @@
+require "time_iterator"
+
 RSpec.describe TimeIterator do
   let(:time) { Time.gm(2000, 1, 1, 0, 0, 0) }
 
