@@ -8,6 +8,14 @@ RSpec.describe(TimeRange) do
   end
   let(:range) { described_class.new(first, last).by(**by) }
 
+  shared_examples 'it is infinite' do
+    describe '#count' do
+      subject { range.count }
+
+      it { is_expected.to eq Float::INFINITY }
+    end
+  end
+
   shared_examples 'a Range' do
     it 'isa Range' do
       expect(range).to be_a(Range)
@@ -43,8 +51,16 @@ RSpec.describe(TimeRange) do
   end
 
   shared_examples 'it has a begin' do
-    it 'has a begin' do
-      expect(range.begin).to eq first
+    describe '#begin' do
+      it 'has a begin' do
+        expect(range.begin).to eq first
+      end
+    end
+
+    describe '#first' do
+      it 'has a first' do
+        expect(range.first).to eq first
+      end
     end
 
     describe '#cover?' do
@@ -71,8 +87,16 @@ RSpec.describe(TimeRange) do
   end
 
   shared_examples 'it has an end' do
-    it 'has an end' do
-      expect(range.end).to eq last
+    describe '#end' do
+      it 'has an end' do
+        expect(range.end).to eq last
+      end
+    end
+
+    describe '#last' do
+      it 'has a last value' do
+        expect(range.last).to eq last
+      end
     end
 
     describe '#cover?' do
@@ -102,12 +126,28 @@ RSpec.describe(TimeRange) do
     let(:first) { nil }
 
     it_behaves_like 'a Range'
+    it_behaves_like 'it has an end'
+    it_behaves_like 'it is infinite'
 
     it 'has no begin' do
       expect(range.begin).to be_nil
     end
 
-    it_behaves_like 'it has an end'
+    describe '#first' do
+      it 'raises' do
+        expect {
+          range.first
+        }.to raise_error(RangeError, /cannot get the first element of beginless range/)
+      end
+    end
+
+    describe '#entries' do
+      it 'raises' do
+        expect {
+          range.entries
+        }.to raise_error(TypeError, /can't iterate from NilClass/)
+      end
+    end
   end
 
   context 'with no end' do
@@ -115,9 +155,26 @@ RSpec.describe(TimeRange) do
 
     it_behaves_like 'a Range'
     it_behaves_like 'it has a begin'
+    it_behaves_like 'it is infinite'
 
     it 'has no end' do
       expect(range.end).to be_nil
+    end
+
+    describe '#last' do
+      it 'raises' do
+        expect {
+          range.last
+        }.to raise_error(RangeError, /cannot get the last element of endless range/)
+      end
+    end
+
+    describe '#entries' do
+      it 'raises' do
+        expect {
+          range.entries
+        }.to raise_error(RangeError, /cannot convert endless range to an array/)
+      end
     end
   end
 
@@ -136,12 +193,16 @@ RSpec.describe(TimeRange) do
     it_behaves_like 'it has a begin'
     it_behaves_like 'it has an end'
 
-    it '#count' do
-      expect(range.count).to eq entries.size
+    describe '#count' do
+      subject { range.count }
+
+      it { is_expected.to eq entries.size }
     end
 
-    it '#entries' do
-      expect(range.entries).to eq entries
+    describe '#entries' do
+      subject { range.entries }
+
+      it { is_expected.to eq entries }
     end
   end
 end
