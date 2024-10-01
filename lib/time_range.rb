@@ -1,5 +1,4 @@
 require 'date'
-require 'delegate'
 
 require_relative 'time_range/advancer'
 require_relative 'time_range/time'

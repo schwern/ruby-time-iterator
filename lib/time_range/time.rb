@@ -1,3 +1,5 @@
+require 'delegate'
+
 class TimeRange < Range
   # @private
   #
