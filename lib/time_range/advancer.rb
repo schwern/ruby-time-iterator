@@ -3,7 +3,7 @@ require_relative 'time'
 class TimeRange < Range
   # @private
   #
-  # Logic taken fro ActiveSupport to add time intervals to Time objects.
+  # Logic taken from ActiveSupport to add time intervals to Time objects.
   module Advancer
     class << self
       # From rails/activesupport/lib/active_support/core_ext/time/calculations.rb
