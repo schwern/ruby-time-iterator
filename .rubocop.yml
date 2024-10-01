@@ -5,7 +5,7 @@ require:
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 3.0
+  TargetRubyVersion: 2.7
 
 # Useful to separate conceptual expressions.
 Layout/SpaceInsideArrayLiteralBrackets:
