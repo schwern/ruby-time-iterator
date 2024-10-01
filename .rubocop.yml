@@ -5,7 +5,7 @@ require:
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 3.0
+  TargetRubyVersion: 2.7
 
 # Useful to separate conceptual expressions.
 Layout/SpaceInsideArrayLiteralBrackets:
@@ -27,6 +27,9 @@ RSpec/ExampleLength:
 # change(thing, :method) is clever, but it's also magical. Use it, but don't enforce it.
 RSpec/ExpectChange:
   Enabled: false
+
+RSpec/ImplicitSubject:
+  EnforcedStyle: single_statement_only
 
 # Just one expectation per example is ambitious.
 RSpec/MultipleExpectations:
