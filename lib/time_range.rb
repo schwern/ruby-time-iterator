@@ -4,7 +4,9 @@ require 'delegate'
 require_relative 'time_range/advancer'
 require_relative 'time_range/time'
 
-# Like Range, but for Time objects.
+# Range over Time stepping by time intervals.
+#
+# Does not require ActiveSupport.
 #
 # Unlike a Range, it is necessary to call #by to say how long between
 # each step.
@@ -30,10 +32,10 @@ class TimeRange < Range
     )
   end
 
-  # The time interval to add to step through the TimeRange.
+  # The time interval to use when iterating through the TimeRange.
   #
   # Returns the TimeRange object so you can safely chain
-  # TimeRange.new(...).by(...)
+  # time_range = TimeRange.new(...).by(...)
   #
   # Currently cannot be negative.
   #

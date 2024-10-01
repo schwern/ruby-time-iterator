@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ["Michael G. Schwern"]
   spec.email = ["schwern@pobox.com"]
 
-  spec.summary = "Iterate using Time objects."
+  spec.summary = "Range over Times stepping by time intervals."
   spec.description = "Easy iterating over various periods of time."
   spec.homepage = "https://github.com/schwern/ruby-time_range"
   spec.required_ruby_version = ">= 2.7"
