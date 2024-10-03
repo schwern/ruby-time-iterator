@@ -48,6 +48,34 @@ RSpec.describe(TimeRange) do
         it { is_expected.to be false }
       end
     end
+
+    describe '#hash' do
+      subject { range.hash == other_range.hash }
+
+      context 'when the other range is the same' do
+        let(:other_range) { described_class.new(first, last).by(**by) }
+
+        it { is_expected.to be true }
+      end
+
+      context 'when the other range has a different by' do
+        let(:other_range) { described_class.new(first, last).by(minutes: 42) }
+
+        it { is_expected.to be false }
+      end
+    end
+
+    describe '#inspect' do
+      subject { range.inspect }
+
+      it { is_expected.to include by.inspect }
+    end
+
+    describe '#size' do
+      subject { range.size }
+
+      it { is_expected.to be_nil }
+    end
   end
 
   shared_examples 'it has a begin' do
@@ -83,6 +111,18 @@ RSpec.describe(TimeRange) do
 
         it { is_expected.to be true }
       end
+    end
+
+    describe '#inspect' do
+      subject { range.inspect }
+
+      it { is_expected.to include first.inspect }
+    end
+
+    describe '#min' do
+      subject { range.min }
+
+      it { is_expected.to eq first }
     end
   end
 
@@ -120,9 +160,21 @@ RSpec.describe(TimeRange) do
         it { is_expected.to be false }
       end
     end
+
+    describe '#inspect' do
+      subject { range.inspect }
+
+      it { is_expected.to include last.inspect }
+    end
+
+    describe '#max' do
+      subject { range.max }
+
+      it { is_expected.to eq last }
+    end
   end
 
-  context 'with no start' do
+  context 'with no begin' do
     let(:first) { nil }
 
     it_behaves_like 'a Range'
@@ -146,6 +198,14 @@ RSpec.describe(TimeRange) do
         expect {
           range.entries
         }.to raise_error(TypeError, /can't iterate from NilClass/)
+      end
+    end
+
+    describe '#min' do
+      it 'raises' do
+        expect {
+          range.min
+        }.to raise_error(RangeError, /cannot get the minimum of beginless range/)
       end
     end
   end
@@ -176,6 +236,14 @@ RSpec.describe(TimeRange) do
         }.to raise_error(RangeError, /cannot convert endless range to an array/)
       end
     end
+
+    describe '#max' do
+      it 'raises' do
+        expect {
+          range.max
+        }.to raise_error(RangeError, /cannot get the maximum of endless range/)
+      end
+    end
   end
 
   context 'with a start and end' do
@@ -192,6 +260,12 @@ RSpec.describe(TimeRange) do
     it_behaves_like 'a Range'
     it_behaves_like 'it has a begin'
     it_behaves_like 'it has an end'
+
+    describe '#%' do
+      it 'skips entries' do
+        expect( range.%(2).to_a ).to eq [entries[0], entries[2], entries[4]]
+      end
+    end
 
     describe '#count' do
       subject { range.count }
