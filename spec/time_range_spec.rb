@@ -24,6 +24,12 @@ RSpec.describe(TimeRange) do
     describe '#eql?' do
       subject { range.eql?(other_range) }
 
+      context 'when the other is not a TimeRange' do
+        let(:other_range) { Range.new(1, 5) }
+
+        it { is_expected.to be false }
+      end
+
       context 'when the other range is the same' do
         let(:other_range) { described_class.new(first, last).by(**by) }
 

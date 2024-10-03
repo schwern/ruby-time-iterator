@@ -64,6 +64,8 @@ class TimeRange < Range
 
   # Like Range#eql?, but will be false if their #by is different.
   def eql?(other)
+    return false unless other.is_a?(self.class)
+
     other_by = other.begin&.by || other.end&.by
     return false if @by != other_by
 
