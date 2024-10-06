@@ -8,6 +8,10 @@ RSpec.describe(TimeRange) do
   end
   let(:range) { described_class.new(first, last).by(**by) }
 
+  # Range#size is supposed to always return nil when the range
+  # isn't numeric, but some versions of Ruby have a bug.
+  let(:range_size_return) { nil }
+
   shared_examples 'it is infinite' do
     describe '#count' do
       subject { range.count }
@@ -80,7 +84,7 @@ RSpec.describe(TimeRange) do
     describe '#size' do
       subject { range.size }
 
-      it { is_expected.to be_nil }
+      it { is_expected.to eq range_size_return }
     end
   end
 
@@ -182,6 +186,9 @@ RSpec.describe(TimeRange) do
 
   context 'with no begin' do
     let(:first) { nil }
+    # Ruby 3.1 has a bug where #size returns Infinity for
+    # beginless non-Numeric ranges.
+    let(:range_size_return) { (.."z").size }
 
     it_behaves_like 'a Range'
     it_behaves_like 'it has an end'
