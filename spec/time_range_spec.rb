@@ -3,10 +3,10 @@ require "time_range"
 RSpec.describe(TimeRange) do
   let(:first) { Time.local(2024, 2, 20) }
   let(:last) { Time.local(2024, 3, 20, 9, 8, 7) }
-  let(:by) do
+  let(:step_by) do
     { weeks: 1 }
   end
-  let(:range) { described_class.new(first, last).by(**by) }
+  let(:range) { described_class.new(first, last).step_by(**step_by) }
 
   # Range#size is supposed to always return nil when the range
   # isn't numeric, but some versions of Ruby have a bug.
@@ -38,25 +38,25 @@ RSpec.describe(TimeRange) do
       end
 
       context 'when the other range is the same' do
-        let(:other_range) { described_class.new(first, last).by(**by) }
+        let(:other_range) { described_class.new(first, last).step_by(**step_by) }
 
         it { is_expected.to be true }
       end
 
       context 'when the other range has a different start' do
-        let(:other_range) { described_class.new(Time.now, last).by(**by) }
+        let(:other_range) { described_class.new(Time.now, last).step_by(**step_by) }
 
         it { is_expected.to be false }
       end
 
       context 'when the other range has a different end' do
-        let(:other_range) { described_class.new(first, Time.now).by(**by) }
+        let(:other_range) { described_class.new(first, Time.now).step_by(**step_by) }
 
         it { is_expected.to be false }
       end
 
-      context 'when the other range has a different by' do
-        let(:other_range) { described_class.new(first, last).by(minutes: 42) }
+      context 'when the other range has a different step_by' do
+        let(:other_range) { described_class.new(first, last).step_by(minutes: 42) }
 
         it { is_expected.to be false }
       end
@@ -66,13 +66,13 @@ RSpec.describe(TimeRange) do
       subject { range.hash == other_range.hash }
 
       context 'when the other range is the same' do
-        let(:other_range) { described_class.new(first, last).by(**by) }
+        let(:other_range) { described_class.new(first, last).step_by(**step_by) }
 
         it { is_expected.to be true }
       end
 
-      context 'when the other range has a different by' do
-        let(:other_range) { described_class.new(first, last).by(minutes: 42) }
+      context 'when the other range has a different step_by' do
+        let(:other_range) { described_class.new(first, last).step_by(minutes: 42) }
 
         it { is_expected.to be false }
       end
@@ -81,7 +81,7 @@ RSpec.describe(TimeRange) do
     describe '#inspect' do
       subject { range.inspect }
 
-      it { is_expected.to include by.inspect }
+      it { is_expected.to include step_by.inspect }
     end
 
     describe '#size' do
@@ -92,11 +92,11 @@ RSpec.describe(TimeRange) do
   end
 
   shared_examples 'it has a begin' do
-    it 'raises gracefully if #by is not called' do
+    it 'raises gracefully if #step_by is not called' do
       range = described_class.new(first, last)
       expect {
         range.first(1)
-      }.to raise_error ArgumentError, /by\(\) not set for this TimeRange/
+      }.to raise_error ArgumentError, /step_by\(\) not set for this TimeRange/
     end
 
     describe '#begin' do
