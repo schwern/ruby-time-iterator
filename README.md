@@ -14,14 +14,14 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ## Usage
 
-Works just like Range with one important change; **you must call `#by` to set a time interval.**
+Works just like Range with one important change; **you must call `#step_by` to set a time interval.**
 
     require 'time_range'
 
     # Print the first day of each month of 2024.
     time_range = TimeRange
       .new(Time.local(2024), Time.local(2025), true)
-      .by(months: 1)
+      .step_by(months: 1)
     time_range.each { |time| puts time }
 
 ## Development
