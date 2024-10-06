@@ -15,6 +15,8 @@ class TimeRange < Range
     end
 
     def succ
+      raise ArgumentError, 'by() not set for this TimeRange' if !@by || @by.empty?
+
       next_time = Advancer.advance_time(@time, @by)
       return self.class.new(next_time, @by)
     end

@@ -92,6 +92,13 @@ RSpec.describe(TimeRange) do
   end
 
   shared_examples 'it has a begin' do
+    it 'raises gracefully if #by is not called' do
+      range = described_class.new(first, last)
+      expect {
+        range.first(1)
+      }.to raise_error ArgumentError, /by\(\) not set for this TimeRange/
+    end
+
     describe '#begin' do
       it 'has a begin' do
         expect(range.begin).to eq first
