@@ -12,6 +12,9 @@ RSpec.describe(TimeRange) do
   # isn't numeric, but some versions of Ruby have a bug.
   let(:range_size_return) { nil }
 
+  # Range#max can have a bug where it sometimes errors.
+  let(:has_range_max_bug) { false }
+
   shared_examples 'it is infinite' do
     describe '#count' do
       subject { range.count }
@@ -180,7 +183,10 @@ RSpec.describe(TimeRange) do
     describe '#max' do
       subject { range.max }
 
-      it { is_expected.to eq last }
+      it 'has a max' do
+        skip "Range#max has a bug" if has_range_max_bug
+        expect(range.max).to eq last
+      end
     end
   end
 
@@ -189,6 +195,15 @@ RSpec.describe(TimeRange) do
     # Ruby 3.1 has a bug where #size returns Infinity for
     # beginless non-Numeric ranges.
     let(:range_size_return) { (.."z").size }
+
+    # Ruby 2.7 has a bug where #max will raise
+    # ArgumentError (comparison of NilClass with String failed)
+    let(:has_range_max_bug) do
+      (.."z").max
+      false
+    rescue ArgumentError
+      true
+    end
 
     it_behaves_like 'a Range'
     it_behaves_like 'it has an end'
