@@ -8,6 +8,13 @@ RSpec.describe(TimeRange) do
   end
   let(:range) { described_class.new(first, last).by(**by) }
 
+  # Range#size is supposed to always return nil when the range
+  # isn't numeric, but some versions of Ruby have a bug.
+  let(:range_size_return) { nil }
+
+  # Range#max can have a bug where it sometimes errors.
+  let(:has_range_max_bug) { false }
+
   shared_examples 'it is infinite' do
     describe '#count' do
       subject { range.count }
@@ -23,6 +30,12 @@ RSpec.describe(TimeRange) do
 
     describe '#eql?' do
       subject { range.eql?(other_range) }
+
+      context 'when the other is not a TimeRange' do
+        let(:other_range) { Range.new(1, 5) }
+
+        it { is_expected.to be false }
+      end
 
       context 'when the other range is the same' do
         let(:other_range) { described_class.new(first, last).by(**by) }
@@ -47,6 +60,34 @@ RSpec.describe(TimeRange) do
 
         it { is_expected.to be false }
       end
+    end
+
+    describe '#hash' do
+      subject { range.hash == other_range.hash }
+
+      context 'when the other range is the same' do
+        let(:other_range) { described_class.new(first, last).by(**by) }
+
+        it { is_expected.to be true }
+      end
+
+      context 'when the other range has a different by' do
+        let(:other_range) { described_class.new(first, last).by(minutes: 42) }
+
+        it { is_expected.to be false }
+      end
+    end
+
+    describe '#inspect' do
+      subject { range.inspect }
+
+      it { is_expected.to include by.inspect }
+    end
+
+    describe '#size' do
+      subject { range.size }
+
+      it { is_expected.to eq range_size_return }
     end
   end
 
@@ -84,6 +125,18 @@ RSpec.describe(TimeRange) do
         it { is_expected.to be true }
       end
     end
+
+    describe '#inspect' do
+      subject { range.inspect }
+
+      it { is_expected.to include first.inspect }
+    end
+
+    describe '#min' do
+      subject { range.min }
+
+      it { is_expected.to eq first }
+    end
   end
 
   shared_examples 'it has an end' do
@@ -120,10 +173,37 @@ RSpec.describe(TimeRange) do
         it { is_expected.to be false }
       end
     end
+
+    describe '#inspect' do
+      subject { range.inspect }
+
+      it { is_expected.to include last.inspect }
+    end
+
+    describe '#max' do
+      subject { range.max }
+
+      it 'has a max' do
+        skip "Range#max has a bug" if has_range_max_bug
+        expect(range.max).to eq last
+      end
+    end
   end
 
-  context 'with no start' do
+  context 'with no begin' do
     let(:first) { nil }
+    # Ruby 3.1 has a bug where #size returns Infinity for
+    # beginless non-Numeric ranges.
+    let(:range_size_return) { (.."z").size }
+
+    # Ruby 2.7 has a bug where #max will raise
+    # ArgumentError (comparison of NilClass with String failed)
+    let(:has_range_max_bug) do
+      (.."z").max
+      false
+    rescue ArgumentError
+      true
+    end
 
     it_behaves_like 'a Range'
     it_behaves_like 'it has an end'
@@ -146,6 +226,14 @@ RSpec.describe(TimeRange) do
         expect {
           range.entries
         }.to raise_error(TypeError, /can't iterate from NilClass/)
+      end
+    end
+
+    describe '#min' do
+      it 'raises' do
+        expect {
+          range.min
+        }.to raise_error(RangeError, /cannot get the minimum of beginless range/)
       end
     end
   end
@@ -176,6 +264,14 @@ RSpec.describe(TimeRange) do
         }.to raise_error(RangeError, /cannot convert endless range to an array/)
       end
     end
+
+    describe '#max' do
+      it 'raises' do
+        expect {
+          range.max
+        }.to raise_error(RangeError, /cannot get the maximum of endless range/)
+      end
+    end
   end
 
   context 'with a start and end' do
@@ -192,6 +288,12 @@ RSpec.describe(TimeRange) do
     it_behaves_like 'a Range'
     it_behaves_like 'it has a begin'
     it_behaves_like 'it has an end'
+
+    describe '#%' do
+      it 'skips entries' do
+        expect( range.%(2).to_a ).to eq [entries[0], entries[2], entries[4]]
+      end
+    end
 
     describe '#count' do
       subject { range.count }

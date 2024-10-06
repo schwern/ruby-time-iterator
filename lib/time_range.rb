@@ -51,21 +51,34 @@ class TimeRange < Range
     seconds: nil, minutes: nil, hours: nil,
     days: nil, weeks: nil, months: nil, years: nil
   )
-    by = {
+    @by = {
       seconds: seconds, minutes: minutes, hours: hours,
       days: days, weeks: weeks, months: months, years: years
     }.compact!
 
-    self.begin&.by = by
-    self.end&.by = by
+    self.begin&.by = @by
+    self.end&.by = @by
 
     return self
   end
 
   # Like Range#eql?, but will be false if their #by is different.
   def eql?(other)
-    return false if self.begin&.by != other.begin&.by || self.end&.by != other.end&.by
+    return false unless other.is_a?(self.class)
+
+    other_by = other.begin&.by || other.end&.by
+    return false if @by != other_by
 
     super
+  end
+
+  # Like Range#hash, but changing #by results in a different hash.
+  def hash
+    return [self, @by].hash
+  end
+
+  # Like Range#inspect, but includes #by.
+  def inspect
+    return "#{super} #{@by.inspect}"
   end
 end

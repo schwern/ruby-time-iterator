@@ -35,6 +35,9 @@ RSpec/ImplicitSubject:
 RSpec/MultipleExpectations:
   Max: 5
 
+RSpec/MultipleMemoizedHelpers:
+  Max: 10
+
 # %i[foo bar baz] is more difficult to understand than [:foo, :bar, :baz]
 Style/SymbolArray:
   Enabled: false
